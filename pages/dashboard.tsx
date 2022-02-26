@@ -1,3 +1,4 @@
+import { destroyCookie } from 'nookies'
 import { useContext, useEffect } from 'react'
 import { AuthContext } from '../contexts/AuthContext'
 import { setupAPIClient } from '../services/api'
@@ -23,9 +24,8 @@ export default function Dashboard() {
 export const getServerSideProps = withSSRAuth(async (ctx) => {
   // in server-side parseCookies only works passing the ctx
   const apiClient = setupAPIClient(ctx)
-  const response = await apiClient.get('/me')
 
-  console.log(response.data)
+  const response = await apiClient.get('/me')
 
   return {
     props: {},
