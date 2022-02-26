@@ -35,6 +35,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (token) {
       try {
         api.get('/me').then((response) => {
+          console.log('context data')
+          console.log(response.data)
           const { email, permissions, roles } = response.data
 
           setUser({ email, permissions, roles })

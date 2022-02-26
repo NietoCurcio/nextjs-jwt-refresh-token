@@ -57,20 +57,19 @@ api.interceptors.response.use(
             .finally(() => {
               isRefreshing = false
             })
-        } else {
-          return new Promise((resolve, reject) => {
-            failedRequestsQueue.push({
-              resolve: (token: string) => {
-                originalConfig.headers['Authorization'] = `Bearer ${token}`
-
-                resolve(api(originalConfig))
-              },
-              reject: (err: AxiosError) => {
-                reject(err)
-              },
-            })
-          })
         }
+        return new Promise((resolve, reject) => {
+          failedRequestsQueue.push({
+            resolve: (token: string) => {
+              originalConfig.headers['Authorization'] = `Bearer ${token}`
+
+              resolve(api(originalConfig))
+            },
+            reject: (err: AxiosError) => {
+              reject(err)
+            },
+          })
+        })
       } else {
         // logout user
       }
