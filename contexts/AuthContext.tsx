@@ -33,11 +33,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const { 'nextauth.token': token } = parseCookies()
     if (token) {
-      api.get('/me').then((response) => {
-        const { email, permissions, roles } = response.data
+      try {
+        api.get('/me').then((response) => {
+          const { email, permissions, roles } = response.data
 
-        setUser({ email, permissions, roles })
-      })
+          setUser({ email, permissions, roles })
+        })
+      } catch (err) {
+        console.log('err catch')
+        console.log(err)
+      }
     }
   }, [])
 
@@ -76,7 +81,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser({ email, permissions, roles })
 
       // when the user logs in (first sign in), there's no token in cookies yet
-      // thus will be retrived a empty object in the services files from parseCoookies
+      // thus will be retrieved a empty object in the services files from parseCoookies
       // but, once we have that data, we pass it into our services to do proper
       // requests with the token in the headers without the needing of reloading
       // the page (beucase with reloading, parseCookies will get the stored cookies)
