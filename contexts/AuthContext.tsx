@@ -1,7 +1,7 @@
 import Router from 'next/router'
 import { createContext, ReactNode, useEffect, useState } from 'react'
 import { api } from '../services/api'
-import { parseCookies, setCookie } from 'nookies'
+import { destroyCookie, parseCookies, setCookie } from 'nookies'
 
 interface SignInCredentials {
   email: string
@@ -26,6 +26,12 @@ interface AuthContextData {
 
 export const AuthContext = createContext({} as AuthContextData)
 
+export const signOut = () => {
+  destroyCookie(undefined, 'nextauth.token')
+  destroyCookie(undefined, 'nextauth.refreshToken')
+  Router.push('/')
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const isAuthenticated = !!user
@@ -33,18 +39,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const { 'nextauth.token': token } = parseCookies()
     if (token) {
-      try {
-        api.get('/me').then((response) => {
-          console.log('context data')
-          console.log(response.data)
+      // trycatch only works with async await syntax
+      api
+        .get('/me')
+        .then((response) => {
+          // console.log('context data')
+          // console.log(response.data)
           const { email, permissions, roles } = response.data
 
           setUser({ email, permissions, roles })
         })
-      } catch (err) {
-        console.log('err catch')
-        console.log(err)
-      }
+        .catch(() => {
+          signOut()
+        })
     }
   }, [])
 
@@ -71,6 +78,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // ctx cookies in client-side is undefined
       // it's server-side responsability of renewing a expired token
+
+      /*
+      JWT is stateless, is not stored in a database, the backend only knows
+      that a token was truly created by him because of the "secret", i.e.
+      the backend uses the secret to sign the token 
+
+      the backend also creates a "refresh token", once the token has been expired
+      it will verify if the refresh token is valid to respond with a new token and
+      a new refresh token. The refresh token is stored/maintened by the back-end
+      with this approach since the refresh token is maintened by the database
+      it's possible to revoke a refresh token and it will become invalid
+
+      JWT, unlike the refresh token, is stateless and cannot be revoked
+      */
       setCookie(undefined, 'nextauth.token', token, {
         maxAge: 60 * 60 * 24 * 30, // 30 days
         path: '/',
