@@ -58,7 +58,7 @@ export function withSSRAuth<P>(
     }
 
     try {
-      return callback(ctx)
+      return await callback(ctx)
     } catch (error) {
       if (error instanceof AuthTokenError) {
         destroyCookie(ctx, 'nextauth.token')

@@ -81,6 +81,7 @@ export function setupAPIClient(ctx = undefined) {
           if (typeof window === 'object') {
             signOut()
           } else {
+            console.log(error.response.data)
             return Promise.reject(new AuthTokenError())
           }
         }

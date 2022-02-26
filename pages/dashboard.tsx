@@ -8,7 +8,7 @@ import { api } from '../services/apiClient'
 import { withSSRAuth } from '../utils/withSSRAuth'
 
 export default function Dashboard() {
-  const { user } = useContext(AuthContext)
+  const { user, signOut } = useContext(AuthContext)
 
   // it does not ensures security. If it was a sensitive data
   // would be necessary to verify the permissions in the backend
@@ -26,6 +26,9 @@ export default function Dashboard() {
   return (
     <>
       <h1>dashboard {user?.email}</h1>
+
+      <button onClick={signOut}>Sign out</button>
+
       <Can permissions={['metrics.list']}>
         <div>Metricas</div>
       </Can>
