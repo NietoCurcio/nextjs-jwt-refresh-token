@@ -1,6 +1,6 @@
 # Next.js autenticação - JWT e Refresh token
 
-> Projeto estudado durante o Ignite da Rocketseat no módulo de Autenticação de autorização
+> Projeto estudado durante o Ignite da Rocketseat no módulo de autenticação e autorização
 
 ## Authentication Context
 
