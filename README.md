@@ -12,7 +12,7 @@ No contexto de autenticação é armazenado o usuário e a informação se ele e
 
 ### JSON Web Token
 
-JWT é "stateless", ou seja não o token não é mantido pelo servidor, o back-end apenas assina o token ao enviar para o cliente, e usa a sua assinatura secreta para verificar se o token é válido.
+JWT é "stateless", ou seja o token não é mantido pelo servidor, o back-end apenas assina o token ao enviar para o cliente, e usa a sua assinatura secreta para verificar se o token é válido.
 
 ### Refresh token
 
