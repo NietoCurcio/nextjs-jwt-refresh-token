@@ -26,7 +26,7 @@ export function withSSRAuth<P>(
     const token = cookies['nextauth.token']
     //   decode is a synonum of decrypt, it's just a way of represent data
     //   represent data in alphanumerics characters for example
-    //   thus, it's different from decryptograph and cryptograph, this is secret data
+    //   thus, it's different from cryptography, this is secret data
 
     if (!token) {
       return {

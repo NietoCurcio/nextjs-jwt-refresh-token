@@ -1,34 +1,24 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next.js autenticação - JWT e Refresh token
 
-## Getting Started
+> Projeto estudado durante o Ignite da Rocketseat no módulo de Autenticação de autorização
 
-First, run the development server:
+## Authentication Context
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+No contexto de autenticação é armazenado o usuário e a informação se ele está autenticado, as informações do usuário são o e-mail, as permissões e funções desse usuário, uma vez que esteja autenticado, essas informações são utilizadas para verificar a autorização desse usuário (RBAC). Os dados do usuário são adquiridos a partir dos cookies no browser, é possível armazenar dados no navegador através de sessionStorage, localStorage e cookies.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- sessionStorage: os dados são armazenados até o usuário fechar o browser
+- localStorage: os dados são armazenados mesmo se o usuário fechar o browser
+- cookies: os dados são mantidos assim como no localStorage e os cookies podem ser acessados server-side
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### JSON Web Token
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+JWT é "stateless", ou seja não o token não é mantido pelo servidor, o back-end apenas assina o token ao enviar para o cliente, e usa a sua assinatura secreta para verificar se o token é válido.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### Refresh token
 
-## Learn More
+O refresh token é mantido pelo back-end. Ao expirar um JWT, é feito uma requisição enviando o refresh token para que o back-end use essa informação para verificar se o refresh token é válido e gerar um novo JWT e um novo refresh token para o cliente. Dessa forma o tempo de expiração de um JWT pode ser mais curto
+pois é feita uma constante revalidação desse token conforme ele é expirado.
 
-To learn more about Next.js, take a look at the following resources:
+#### Interceptors
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Com o uso de interceptors é possível anexar extra lógica antes ou depois de uma requisição. Como é feito o uso do refresh token para revalidar o token do cliente, quando o servidor envia como resposta um status de 401 (Unauthorized) junto da informação que o token está expirado, o client-side intercepta as requisições que gerou esse erro, atualiza o token que está sendo enviado nos headers de cada uma dessas requisições e realiza novamente a requisição com o novo token. É possível ver essa lógica no arquivo "api.ts" dentro da pasta "services".
